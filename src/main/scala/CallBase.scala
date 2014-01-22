@@ -32,6 +32,7 @@ object CallBase extends App{
 
   // let's insert some data in 'mytable' and get the row
 
+  //create db before
   val table = new HTable(conf, "test")
 
   val theput= new Put(Bytes.toBytes("rowkey1"))
