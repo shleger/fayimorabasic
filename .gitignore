@@ -1,0 +1,12 @@
+.repository
+target
+*.ipr
+*.iws
+*.ids
+*.log
+*.tlog
+*.class
+*web/src/main/webapp/WEB-INF/classes
+logs
+.idea
+*.iml
