@@ -1,6 +1,6 @@
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.client.{Get, Put, HTable, HBaseAdmin}
-import org.apache.hadoop.hbase.HBaseConfiguration
+import org.apache.hadoop.hbase.{HTableDescriptor, HBaseConfiguration}
 import org.apache.hadoop.hbase.rest.Constants
 import org.apache.hadoop.hbase.util.Bytes
 
@@ -27,6 +27,10 @@ object CallBase extends App{
   // list the tables
   val listtables=admin.listTables()
   listtables.foreach(println)
+//
+//  def descr: HTableDescriptor = new HTableDescriptor()
+//
+//  admin.createTable(descr)
 
   println("list tables completed")
 
