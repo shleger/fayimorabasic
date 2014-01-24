@@ -1,4 +1,4 @@
-package despat
+package despat.structural
 
 /**
  * $Revision: $
