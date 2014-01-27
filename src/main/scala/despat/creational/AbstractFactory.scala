@@ -6,7 +6,7 @@ package despat.creational
  * $Author:  $
  * $Date:  $
  */
-object Factory extends App {
+object AbstractFactory extends App {
 
   val code = Country.US
 
