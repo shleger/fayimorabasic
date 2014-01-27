@@ -11,21 +11,23 @@ object Factory extends App {
   val code = Country.US
 
 
-//  val factory : AbstractFinancialToolFactory
+  var factory: AbstractFinancialToolFactory = null
 
   code match {
-    case Country.US => new AmericanFinancialToolFactory()
-    case Country.RU => new RussianFinancialToolFacory()
+    case Country.US => factory = new AmericanFinancialToolFactory()
+    case Country.RU => factory = new RussianFinancialToolFacory()
     case _ => throw new Exception("set country code")
 
   }
 
+  val inpProc = new InputProcessor(factory)
+  inpProc.processInput(new Input)
 
 }
 
 
 abstract class AbstractFinancialToolFactory {
-   def createTaxProcessor(): TaxProcessor
+  def createTaxProcessor(): TaxProcessor
 
 }
 
@@ -37,7 +39,7 @@ class AmericanFinancialToolFactory extends AbstractFinancialToolFactory {
 }
 
 class RussianFinancialToolFacory extends AbstractFinancialToolFactory {
-   def createTaxProcessor(): TaxProcessor = {
+  def createTaxProcessor(): TaxProcessor = {
     return new RussianTaxProcessor()
   }
 }
@@ -59,6 +61,15 @@ class RussianTaxProcessor extends TaxProcessor {
 }
 
 class Input {}
+
+class InputProcessor(iaxProc: AbstractFinancialToolFactory) {
+  val processor = iaxProc.createTaxProcessor()
+
+
+  def processInput(inp: Input) = {
+    processor.calcTax(inp)
+  }
+}
 
 object Country extends Enumeration {
   val US, RU = Value

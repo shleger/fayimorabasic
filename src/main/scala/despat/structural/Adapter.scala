@@ -5,6 +5,12 @@ package despat.structural
  * $Author:  $
  * $Date:  $
  */
-object Adapter {
+object Adapter extends App{
 
+  val initOneObj = new FirstObject("qqq")
+}
+
+
+class FirstObject(str: String){
+  println("constructor vars: " + str)
 }
