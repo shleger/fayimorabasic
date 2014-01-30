@@ -5,12 +5,39 @@ package despat.structural
  * $Author:  $
  * $Date:  $
  */
-object Adapter extends App{
+object Adapter extends App {
 
-  val initOneObj = new FirstObject("qqq")
+  val chief = new ChiefAdapter
+  val key = chief.makeDinner
+
 }
 
 
-class FirstObject(str: String){
-  println("constructor vars: " + str)
+trait Chief {
+
+  def makeBreakfast: AnyRef
+
+  def makeDinner: AnyRef
+
+  def makeSupper: AnyRef
+
+}
+
+
+class Plumber {
+  def getPipe = new AnyRef
+
+  def getKey = new AnyRef
+
+  def getScrewDriver = new AnyRef
+}
+
+class ChiefAdapter extends Chief {
+  val plumber = new Plumber
+
+  def makeBreakfast: AnyRef = plumber.getKey
+
+  def makeDinner: AnyRef = { println("plumber make dinner")  ; plumber.getPipe   }
+
+  def makeSupper: AnyRef = plumber.getScrewDriver
 }
