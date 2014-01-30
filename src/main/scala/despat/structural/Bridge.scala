@@ -6,6 +6,17 @@ package despat.structural
  * $Date:  $
  */
 object Bridge extends App {
+  println("start " + this)
+
+  val shapes  = List[Shape](
+                            new Circle(5,10,10, new LargeCircleDrawer()),
+                            new Circle(20,30,100, new SmallCircleDrawer())
+                            )
+  shapes.foreach(
+    x => x.draw
+  )
+
+
 
 }
 
@@ -39,9 +50,9 @@ abstract class Shape(_drawer: Draw) {
 }
 
 
-abstract class Circle(_x: Int, _y: Int, _radius: Int, _drawer: Draw) extends Shape(_drawer: Draw){
-  private var x: Int = _x
-  private var y: Int = _y
-  private var radius: Int = _radius
+ class Circle(x: Int, y: Int, radius: Int, _drawer: Draw) extends Shape(_drawer){
 
-}
+   def draw: Unit = _drawer.drawCircle(x,y,radius)
+
+   def enlargeRadius(multiplier: Int): Unit = radius*multiplier
+ }
