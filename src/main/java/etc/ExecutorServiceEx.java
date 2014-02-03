@@ -56,13 +56,33 @@ public class ExecutorServiceEx {
 
         List<Future<String>> futures = executorService2.invokeAll(callables);
 
-        for(Future<String> future : futures){
+        for (Future<String> future : futures) {
             System.out.println("future.get = " + future.get());
         }
 
         executorService2.shutdown();
         System.out.println("down2");
 
+        System.out.println("    ==============  nextExecutor    ============");
+
+
+        ScheduledExecutorService executorService3 = Executors.newScheduledThreadPool(10);
+
+        ScheduledFuture<String> result = executorService3.schedule(
+                new Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        return "Op A";
+                    }
+                }
+                , 2
+                , TimeUnit.SECONDS);
+
+        System.out.println( result.get());
+        executorService3.shutdown();
+        System.out.println("down3");
 
     }
+
+
 }
