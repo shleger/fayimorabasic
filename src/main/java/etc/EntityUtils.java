@@ -1,13 +1,9 @@
 package etc;
 
-/**
- * Класс, описывающий
- *
- * @author shleger
- */
 
-import org.apache.commons.beanutils.PropertyUtils;
-
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
@@ -21,22 +17,19 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Класс, описывающий утилиты тестирования
  *
- * @author shleger
+ * @author Ya
  */
 public class EntityUtils {
 
-    public static AtomicLong sequence = new AtomicLong(0);
+    private static AtomicLong sequence = new AtomicLong(90000);
 
 
 
     /**
-     * Заполнение свойств сущности случайным значениямо для Integer, Long, Date, String
-     *
+     * Заполнение свойств сущности случайным значениями для Integer, Long, Date, String
      * @param <T> t  класс инстанс которого будет создан
-     * @return T инстанс класса Т
-     * @throws IllegalAccessException
-     * @throws java.lang.reflect.InvocationTargetException
-     * @throws InstantiationException
+     * @param isIdGen заполнять ли поле отмеченное @javax.persistence.Id
+     * @return инстанс класса Т
      */
     public static <T> T fillPrimitiveProperties(Class<T> t, boolean... isIdGen) {
 
@@ -58,14 +51,14 @@ public class EntityUtils {
                     }
                 }
             }
-
-            for (PropertyDescriptor propDescriptor : PropertyUtils.getPropertyDescriptors(result)) {
+            BeanInfo beanInfo = Introspector.getBeanInfo(t);
+            for (PropertyDescriptor propDescriptor : beanInfo.getPropertyDescriptors()) {
 
                 Method method = propDescriptor.getWriteMethod();
                 if (method == null) continue;
                 if(idField != null && method.getName().equals("set" + upperCaseFirstLetter(idField.getName()))) {
 
-                    if(isIdGen.length > 0 && isIdGen[0]) { //TODO
+                    if(isIdGen.length > 0 && isIdGen[0]) {
                         method.invoke(result, sequence.incrementAndGet());
                     }
 
@@ -91,7 +84,7 @@ public class EntityUtils {
                     }
                     if (type.getName().equals(String.class.getName())) {
 
-                        method.invoke(result, "поле_" +
+                        method.invoke(result, "Ф_" +
                                 lowerCaseFirstLetter(method.getName().substring(3)) + "_" + sequence.incrementAndGet());
 
                     }
@@ -102,31 +95,68 @@ public class EntityUtils {
                 }
             }
             return result;
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException  | IntrospectionException e) {
             throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
-
-        return null;
-
     }
 
+    /**
+     * Сделать заглавной первую букву строки
+     * @param sString
+     * @return
+     */
     public static String upperCaseFirstLetter(String sString){
         return Character.toString(sString.charAt(0)).toUpperCase()+sString.substring(1);
     }
+
+    /**
+     * Сделать строчной первую букву строки
+     * @param sString
+     * @return
+     */
     public static String lowerCaseFirstLetter(String sString){
         return Character.toString(sString.charAt(0)).toLowerCase()+sString.substring(1);
     }
 
-    public static AtomicLong getSequence() {
-        return sequence;
+    /**
+     * Получение следующего значения последовательности
+     * @return
+     */
+    public static Long nextFromSequence() {
+        return sequence.incrementAndGet();
+    }
+
+    /**
+     * Вызов метода через Reflection API
+     *
+     * @param methodName
+     * @param object
+     * @param params
+     * @return
+     */
+    public static Object invokeMethod(String methodName, Object object,Object ...params) {
+
+        Class[] clazz = new Class[params.length];
+
+        for (int i = 0; i < params.length; i++) {
+            clazz[i] = params[i].getClass();
+        }
+
+
+        try {
+            Method m = object.getClass().getMethod(methodName, clazz);
+            Object ret = m.invoke(object, params);
+
+            return ret;
+
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     public static  @interface Id {
     }
 }
+
 
